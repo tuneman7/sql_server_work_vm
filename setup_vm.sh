@@ -1,4 +1,3 @@
-
 #!/bin/bash
 #get all variables not declared within file
 #check dependencies
@@ -23,7 +22,47 @@ password: password
 ssh_pwauth: True
 chpasswd:
   expire: False
+users:
+  - default
+  - name: ubuntu
+    shell: /bin/bash
+runcmd:
+  - apt update
+  - apt install apt-utils -y
+  - apt upgrade -y
+  - apt install -y docker docker.io python3 python-is-python3 git jq nano curl zip python3-venv python3-pip postgresql-client-common postgresql-client gunicorn mysql-client lsof
+  - groupadd docker
+  - usermod -aG docker ubuntu
+  - newgrp docker
+  - curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+  - curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+  - apt-get update
+  - ACCEPT_EULA=Y apt install msodbcsql18 -y
+  - ACCEPT_EULA=Y apt-get install mssql-tools18 unixodbc-dev -y
+  - mkdir /data
+  - | 
+    mkdir -vp /data/sql_server_work
+    cd /data
+    git clone https://github.com/tuneman7/sql_server_work /data/sql_server_work
+    echo "test"
+    echo "test">output.log
+    cat output.log
+    chmod -R 777 /data/sql_server_work
+    cd /data/sql_server_work
+    /data/sql_server_work/up_all_svrs.sh
+
 EOF
+
+#/var/lib/cloud/instance/scripts
+#/data/sql_server_work/up_all_svrs.sh
+  # - | 
+  #   cd /data
+  #   git clone https://github.com/tuneman7/sql_server_work 
+  #   cd /data/sql_server_work
+  #   echo "test"
+  #   echo "test">output.log
+  #   cat output.log
+  #   chmod -R 777 /data/sql_server_work
 
 cat << EOF > meta-data
 instance-id: SQL_WORK_HOST
@@ -35,7 +74,9 @@ touch vendor-data
 
 #python -m http.server --directory . & >/dev/null
 
-filename=$(pwd)/$VM_Name-disk.qcow2
+filename="$(pwd)/$VM_Name-disk.qcow2"
+echo $filename
+
 
 # Check if the VM is running and shut it down
 if virsh list --all | grep -q "$VM_Name"; then
@@ -59,9 +100,11 @@ while ! $finished; do
         finished=false
     fi
 done
-sleep 1
+sleep 2
 
 rm -rf $filename
+
+sleep 1
 
 cloud-localds user-data.img user-data.txt
 qemu-img create -b ubuntu-22.04-minimal-cloudimg-amd64.img -F qcow2 -f qcow2 $filename 60G
@@ -79,11 +122,10 @@ virt-install --name $VM_Name \
   --boot hd,menu=off \
   --disk path=$filename,device=disk \
   --disk path=user-data.img,format=raw \
-  --init $my_script \
   --graphics none \
   --noautoconsole \
   --check path_in_use=off \
-  --os-variant ubuntu20.04 
+  --os-variant ubuntu22.04 
 
 cd $this_dir
 
