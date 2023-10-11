@@ -2,9 +2,9 @@
 
 export setup_good=1
 
-sudo apt install -y qemu qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager cloud-image-utils libguestfs-tools cpu-checker qemu-system-x86_64
+sudo apt install -y qemu qemu-kvm libvirt-daemon libvirt-clients bridge-utils virt-manager cloud-image-utils libguestfs-tools cpu-checker libvirt-clients
 
-systemctl start libvirtd
+sudo systemctl start libvirtd
 
 if [ $? -ne 0 ]; then
     echo "Not all dependencies installed correctly. ..."

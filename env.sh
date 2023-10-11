@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-sudo ./setup_deps.sh
+source ./setup_deps.sh
 
 if [ $setup_good -eq 0 ]; then
     echo "Dealio"

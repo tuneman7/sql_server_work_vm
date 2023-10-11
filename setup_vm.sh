@@ -83,7 +83,7 @@ virt-install --name $VM_Name \
   --graphics none \
   --noautoconsole \
   --check path_in_use=off \
-  --os-variant ubuntu22.04 
+  --os-variant ubuntu20.04 
 
 cd $this_dir
 
