@@ -1,3 +1,4 @@
+test/
 *.img
 sql_data_files/
 sql_server_env/
