@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-source ./setup_deps.sh
+sudo ./setup_deps.sh
 
 if [ $setup_good -eq 0 ]; then
     echo "Dealio"
@@ -16,6 +16,7 @@ if [ $all_deps -eq 0 ]; then
     return
 fi
 
+VM_Name="SQL_Server_Box"
 
 
 # VENV_NAME=sql_server_env
